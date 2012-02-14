@@ -66,3 +66,5 @@ if(request.getMethod().equals("POST")){
 </body>
 </html>`
 }}}
+==Dependencies==
+You will need to download [http://code.google.com/p/json-simple/downloads/list json_simple-1.1.jar] and place it in your WEB-INF/lib or somewhere in your classpath depending on the framework you use.
