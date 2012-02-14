@@ -1,0 +1,68 @@
+A sample JSP page with a form that illustrated how to use the client library.
+
+== Introduction ==
+PlayThru is a game replacement for captchas.  Place it in your form to challenge the submitter and prove she is a human.
+
+==How to use==
+The following JSP page -- included in the aya_sample.zip download -- shows how to implement a simple form that includes a game and how to get the results of the PlatThru.
+{{{
+<%@ page import="java.util.*" %>
+<%@ page import="com.areyouahuman.clientlibrary.*"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    
+<%
+// These keys need to be stored somewhere, depending on the application.
+// web.xml or properties file are good candidates.
+// Get the key at http://portal.areyouahuman.com/
+String AYAH_PUBLISHER_KEY = "";
+String AYAH_SCORING_KEY = "";
+
+// Instantiate the client library class that we use for various purposes.
+// The session secret is set only on POST and is handled by the Javascript loaded from 
+// the server, i.e. ayah.GetPublisherHTML()
+Ayah ayah = new Ayah(AYAH_PUBLISHER_KEY, AYAH_SCORING_KEY, request.getParameter("session_secret")); 
+
+// We show the form and the game unless the user has posted the form and passed.
+boolean ShowForm = true;
+String GameResultText = "";
+if(request.getMethod().equals("POST")){
+	if(ayah.ScoreResult()){
+		ShowForm = false; 
+		//Passed = true;
+		GameResultText = "You are a human!";
+	}else{
+		GameResultText = "Try again.";
+	}
+}
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Are You A Human Test</title>
+</head>
+<body>
+	<h1>Are You A Human Example Page</h1>
+	<div><%=GameResultText%></div>
+	<% 
+	if(ShowForm){
+	%>	
+	<form method="POST">
+		<div>First Name: <input name="firstname" id="firstname" /></div>
+		<div>Last Name: <input name="lastname" id="lastname" /></div>
+		<div><%= ayah.GetPublisherHTML() %></div>
+		<input type="submit" value="Submit" />
+	</form>	
+	<%
+	}else{	
+	%>
+	<h2>Thank you for submitting the form.</h2>
+	<div>First Name: <%=request.getParameter("firstname")%></div>
+	<div>Last Name: <%=request.getParameter("lastname")%></div>
+	<%
+	}
+	%>
+</body>
+</html>`
+}}}
